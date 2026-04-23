@@ -58,7 +58,8 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/booking', require('./routes/bookingRoutes')); 
 app.use('/api/payment', require('./routes/paymentRoutes')); // Razorpay Integration
 app.use('/api/admin', require('./routes/adminAuthRoutes')); 
-app.use('/api/admin', require('./routes/adminDashboardRoutes')); // Dashboard Intelligence
+app.use('/api/admin', require('./routes/adminDashboardRoutes')); 
+app.use('/api/admin/content', require('./routes/adminContentRoutes')); // Creative CMS
 app.use('/api/v1/vault-core', require('./routes/vaultRoutes')); 
 app.use('/api/founders', founderRoutes);
 app.use('/api/admin', adminRoutes);
