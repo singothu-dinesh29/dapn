@@ -210,7 +210,7 @@ const BookingSection = () => {
                                         {loading ? (
                                             <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
                                         ) : (
-                                            <>Confirm Booking</>
+                                            <>Confirm Booking (v3)</>
                                         )}
                                     </button>
                                 </div>
