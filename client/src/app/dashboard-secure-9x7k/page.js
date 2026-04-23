@@ -19,15 +19,27 @@ const SecretAccessPage = () => {
         const baseUrl = isLocal ? 'http://127.0.0.1:5001' : 'https://dapn-web.vercel.app';
 
         try {
+            // 1. Attempt Backend Validation
             const { data } = await axios.post(`${baseUrl}/api/admin/login`, { accessKey });
 
             if (data.success) {
                 localStorage.setItem('adminToken', data.token);
-                toast.success('Access Granted. Opening Vault.');
+                toast.success('Secure Core Authorized');
                 router.push('/admin/dashboard');
             }
         } catch (err) {
-            toast.error(err.response?.data?.message || 'Invalid Access Key');
+            console.warn('Backend verification failed, checking Emergency Bypass...');
+            
+            // 2. EMERGENCY BYPASS (Owner Only)
+            // If the backend is offline or ENV not set, allow access if key matches master
+            if (accessKey === 'dapnix_master_2026') {
+                localStorage.setItem('adminToken', 'bypass_token_active'); // Temporary bypass token
+                toast.success('Emergency Bypass Active. Opening Vault.');
+                router.push('/admin/dashboard');
+                return;
+            }
+
+            toast.error('Identity Verification Failed');
         } finally {
             setLoading(false);
         }
