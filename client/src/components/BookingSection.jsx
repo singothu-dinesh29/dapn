@@ -294,21 +294,40 @@ const BookingSection = () => {
                                 <h4 className="text-4xl md:text-5xl font-black tracking-tighter text-white mb-4 italic uppercase">SLOT BOOKED!!!</h4>
                                 <p className="text-white/60 font-bold uppercase tracking-widest text-xs mb-10">Elevating your creative vision.</p>
                                 
-                                <button 
-                                    onClick={() => {
-                                        const message = `🚀 *New Booking from Dapnix!* 🚀\n\n👤 *Name:* ${formData.name}\n📱 *Contact:* ${formData.contact}\n📅 *Booked:* ${formData.submissionDate}\n🎁 *Handover:* ${formData.handoverDate}\n🕒 *Slot:* ${formData.timeSlot || 'Standard'}\n🎨 *Project:* ${formData.productType}\n💳 *Payment:* ${formData.paymentMethod}\n📝 *Requirements:* ${formData.description}\n\n_Sent via Dapnix Creative Ecosystem_`;
-                                        const encodedMessage = encodeURIComponent(message);
-                                        window.open(`https://wa.me/919959259761?text=${encodedMessage}`, '_blank');
-                                    }}
-                                    className="group relative flex items-center gap-3 bg-[#25D366] hover:bg-[#20ba5a] text-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl shadow-green-500/20"
-                                >
-                                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-white text-black px-4 py-2 rounded-xl text-[8px] font-black opacity-0 group-hover:opacity-100 transition-all">Share to WhatsApp</div>
-                                    <MessageSquare size={16} />
-                                    Confirm on WhatsApp
-                                </button>
+                                <div className="flex flex-col gap-4 w-full max-w-[280px]">
+                                    <button 
+                                        onClick={() => {
+                                            const message = `🚀 *New Booking from Dapnix!* 🚀\n\n👤 *Name:* ${formData.name}\n📱 *Contact:* ${formData.contact}\n📅 *Booked:* ${formData.submissionDate}\n🎁 *Handover:* ${formData.handoverDate}\n🕒 *Slot:* ${formData.timeSlot || 'Standard'}\n🎨 *Project:* ${formData.productType}\n💳 *Payment:* ${formData.paymentMethod}\n📝 *Requirements:* ${formData.description}\n\n_Sent via Dapnix Creative Ecosystem_`;
+                                            const encodedMessage = encodeURIComponent(message);
+                                            window.open(`https://wa.me/919959259761?text=${encodedMessage}`, '_blank');
+                                        }}
+                                        className="group relative flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#20ba5a] text-white px-8 py-5 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl shadow-green-500/20"
+                                    >
+                                        <MessageSquare size={16} />
+                                        Confirm on WhatsApp
+                                    </button>
 
-                                <div className="mt-12 text-[9px] font-black uppercase tracking-[0.4em] text-white/30">
-                                    Finalizing ecosystem sync...
+                                    <button 
+                                        onClick={() => {
+                                            setIsSubmitted(false);
+                                            setFormData({
+                                                name: '',
+                                                contact: '',
+                                                productType: 'Photo editing',
+                                                submissionDate: '',
+                                                handoverDate: '',
+                                                paymentMethod: 'UPI / PhonePe',
+                                                description: ''
+                                            });
+                                        }}
+                                        className="text-white/40 hover:text-white text-[10px] font-black uppercase tracking-[0.3em] transition-all py-2 hover:translate-y-[-2px]"
+                                    >
+                                        + Book Another Slot
+                                    </button>
+                                </div>
+
+                                <div className="mt-12 text-[9px] font-black uppercase tracking-[0.4em] text-white/10 italic">
+                                    Dapnix | Creative Excellence
                                 </div>
                             </motion.div>
                         )}
