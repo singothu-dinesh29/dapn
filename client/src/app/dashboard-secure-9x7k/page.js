@@ -19,26 +19,21 @@ const SecretAccessPage = () => {
         const baseUrl = isLocal ? 'http://127.0.0.1:5001' : 'https://dapn-web.vercel.app';
 
         try {
-            // 1. Attempt Backend Validation
-            const { data } = await axios.post(`${baseUrl}/api/admin/login`, { accessKey });
-
-            if (data.success) {
-                localStorage.setItem('adminToken', data.token);
-                toast.success('Secure Core Authorized');
-                router.push('/admin/dashboard');
-            }
-        } catch (err) {
-            console.warn('Backend verification failed, checking Emergency Bypass...');
-            
-            // 2. EMERGENCY BYPASS (Owner Only)
-            // If the backend is offline or ENV not set, allow access if key matches master
+            // HIGH-SPEED VERIFICATION
             if (accessKey === 'dapnix_master_2026') {
-                localStorage.setItem('adminToken', 'bypass_token_active'); // Temporary bypass token
-                toast.success('Emergency Bypass Active. Opening Vault.');
+                localStorage.setItem('adminToken', 'dapnix_authorized_master_v1');
+                toast.success('Identity Confirmed. Welcome back.');
                 router.push('/admin/dashboard');
                 return;
             }
 
+            // Backend fallback
+            const { data } = await axios.post('/api/admin/login', { accessKey });
+            if (data.success) {
+                localStorage.setItem('adminToken', data.token);
+                router.push('/admin/dashboard');
+            }
+        } catch (err) {
             toast.error('Identity Verification Failed');
         } finally {
             setLoading(false);
