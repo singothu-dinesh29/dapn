@@ -1,10 +1,33 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import axios from 'axios';
 import { Database, ShieldCheck, Activity, Users, CreditCard } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const AdminDashboard = () => {
+    const [stats, setStats] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchStats();
+    }, []);
+
+    const fetchStats = async () => {
+        try {
+            const token = localStorage.getItem('adminToken');
+            const { data } = await axios.get('https://dapn-web.vercel.app/api/admin/dashboard', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setStats(data.data);
+        } catch (error) {
+            console.error('Stats Fetch Error:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading) return null;
+
     return (
         <div className="animate-in fade-in duration-700">
             <div className="flex justify-between items-end mb-16">
@@ -20,9 +43,9 @@ const AdminDashboard = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                     {[
-                        { label: 'Revenue', icon: CreditCard, val: '₹42,500', color: 'text-emerald-500' },
-                        { label: 'Users', icon: Users, val: '128', color: 'text-blue-500' },
-                        { label: 'Active Projects', icon: Activity, val: '14', color: 'text-orange-500' },
+                        { label: 'Revenue', icon: CreditCard, val: `₹${stats?.totalRevenue || 0}`, color: 'text-emerald-500' },
+                        { label: 'Users', icon: Users, val: stats?.totalUsers || 0, color: 'text-blue-500' },
+                        { label: 'Total Bookings', icon: Activity, val: stats?.totalBookings || 0, color: 'text-orange-500' },
                         { label: 'Uptime', icon: ShieldCheck, val: '99.9%', color: 'text-zinc-500' }
                     ].map((stat, i) => (
                         <motion.div 
