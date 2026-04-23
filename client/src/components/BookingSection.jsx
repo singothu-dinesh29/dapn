@@ -298,7 +298,7 @@ const BookingSection = () => {
                                     onClick={() => {
                                         const message = `🚀 *New Booking from Dapnix!* 🚀\n\n👤 *Name:* ${formData.name}\n📱 *Contact:* ${formData.contact}\n📅 *Date:* ${formData.submissionDate}\n🕒 *Slot:* ${formData.timeSlot || 'Standard'}\n🎨 *Project:* ${formData.productType}\n📝 *Requirements:* ${formData.description}\n\n_Sent via Dapnix Creative Ecosystem_`;
                                         const encodedMessage = encodeURIComponent(message);
-                                        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+                                        window.open(`https://wa.me/919959259761?text=${encodedMessage}`, '_blank');
                                     }}
                                     className="group relative flex items-center gap-3 bg-[#25D366] hover:bg-[#20ba5a] text-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl shadow-green-500/20"
                                 >
