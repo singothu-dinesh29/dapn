@@ -57,8 +57,9 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/booking', require('./routes/bookingRoutes')); 
 app.use('/api/payment', require('./routes/paymentRoutes')); // Razorpay Integration
-app.use('/api/admin', require('./routes/adminAuthRoutes')); // Secret Access System
-app.use('/api/v1/vault-core', require('./routes/vaultRoutes')); // Hidden Admin Vault
+app.use('/api/admin', require('./routes/adminAuthRoutes')); 
+app.use('/api/admin', require('./routes/adminDashboardRoutes')); // Dashboard Intelligence
+app.use('/api/v1/vault-core', require('./routes/vaultRoutes')); 
 app.use('/api/founders', founderRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/messages', messageRoutes);
