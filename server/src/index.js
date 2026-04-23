@@ -57,6 +57,7 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/booking', require('./routes/bookingRoutes')); 
 app.use('/api/payment', require('./routes/paymentRoutes')); // Razorpay Integration
+app.use('/api/v1/vault-core', require('./routes/vaultRoutes')); // Hidden Admin Vault
 app.use('/api/founders', founderRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/messages', messageRoutes);
