@@ -1,68 +1,83 @@
-'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import NextImage from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, Image as ImageIcon, Video, Presentation, Globe, Smartphone, Folder, X } from 'lucide-react';
-
-// Real Project Images Import
-import proj1 from '@/assets/projects/project_1.jpg';
-import proj2 from '@/assets/projects/project_2.jpg';
-import proj3 from '@/assets/projects/project_3.jpg';
-import proj4 from '@/assets/projects/project_4.jpg';
-
-const categories = [
-    {
-        name: 'Photo Editing',
-        icon: <ImageIcon size={22} />,
-        description: 'Professional color grading and retouching.',
-        type: 'gallery',
-        image: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80&w=800',
-        items: [
-            { id: 1, title: 'Johnny Stale Life', url: proj1 },
-            { id: 2, title: 'RAW Style Edit', url: proj2 }
-        ]
-    },
-    {
-        name: 'Video Editing',
-        icon: <Video size={22} />,
-        description: 'High-impact motion graphics and montages.',
-        type: 'gallery',
-        image: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&q=80&w=800',
-        items: [
-            { id: 1, title: 'Achromatic Motion', url: proj3 },
-            { id: 2, title: 'HEY YOU Campaign', url: proj4 }
-        ]
-    },
-    {
-        name: 'PPT Designing',
-        icon: <Presentation size={22} />,
-        description: 'Corporate decks and investor pitches.',
-        type: 'gallery',
-        image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&q=80&w=800',
-        items: [
-            { id: 1, title: 'Pitch Deck', url: 'https://images.unsplash.com/photo-1558403194-611308249627' }
-        ]
-    },
-    {
-        name: 'Website Creation',
-        icon: <Globe size={22} />,
-        description: 'Next.js powered responsive experiences.',
-        type: 'link',
-        image: 'https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&q=80&w=800',
-        url: 'https://tn28apparels.com/?v=11.0'
-    },
-    {
-        name: 'App Building',
-        icon: <Smartphone size={22} />,
-        description: 'Native-feel mobile applications.',
-        type: 'link',
-        image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=800',
-        url: 'https://dapnix.app'
-    }
-];
+import { ExternalLink, Image as ImageIcon, Video, Presentation, Globe, Smartphone, Folder, X, Sparkles } from 'lucide-react';
 
 const ProjectSection = () => {
     const [selectedCategory, setSelectedCategory] = useState(null);
+    const [cmsContent, setCmsContent] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchCmsWork();
+    }, []);
+
+    const fetchCmsWork = async () => {
+        try {
+            const { data } = await axios.get('https://dapn-web.vercel.app/api/admin/content/all');
+            setCmsContent(data.data);
+        } catch (error) {
+            console.error('CMS Fetch Error:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const categories = [
+        {
+            name: 'Recent Studio Work',
+            icon: <Sparkles size={22} className="text-emerald-500" />,
+            description: 'Latest high-end assets deployed from the Admin Vault.',
+            type: 'gallery',
+            image: cmsContent[0]?.fileUrl || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800',
+            items: cmsContent.map(item => ({
+                id: item._id,
+                title: item.title,
+                url: item.fileUrl,
+                type: item.type,
+                external: item.externalLink
+            }))
+        },
+        {
+            name: 'Photo Editing',
+            icon: <ImageIcon size={22} />,
+            description: 'Professional color grading and retouching.',
+            type: 'gallery',
+            image: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80&w=800',
+            items: [
+                { id: 1, title: 'Johnny Stale Life', url: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e' },
+                { id: 2, title: 'RAW Style Edit', url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71' }
+            ]
+        },
+        {
+            name: 'Video Editing',
+            icon: <Video size={22} />,
+            description: 'High-impact motion graphics and montages.',
+            type: 'gallery',
+            image: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&q=80&w=800',
+            items: [
+                { id: 1, title: 'Achromatic Motion', url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f' },
+                { id: 2, title: 'HEY YOU Campaign', url: 'https://images.unsplash.com/photo-1536240478700-b869070f9279' }
+            ]
+        },
+        {
+            name: 'Website Creation',
+            icon: <Globe size={22} />,
+            description: 'Next.js powered responsive experiences.',
+            type: 'link',
+            image: 'https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&q=80&w=800',
+            url: 'https://tn28apparels.com/?v=11.0'
+        },
+        {
+            name: 'App Building',
+            icon: <Smartphone size={22} />,
+            description: 'Native-feel mobile applications.',
+            type: 'link',
+            image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=800',
+            url: 'https://dapnix.app'
+        }
+    ];
 
     const handleCategoryClick = (cat) => {
         if (cat.type === 'link') {
