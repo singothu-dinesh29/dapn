@@ -1,19 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { 
-    createBooking, 
-    getBookings, 
-    updateBookingStatus,
-    updatePaymentStatus
-} = require('../controllers/bookingController');
-const { protect } = require('../middleware/authMiddleware');
+const { createBooking, getBookings } = require('../controllers/bookingController');
 
-// Protected route to book a slot
-router.post('/', protect, createBooking);
+// @route   POST /api/booking/create-booking
+router.post('/create-booking', createBooking);
 
-// Protected routes for creators/admins to manage bookings
-router.get('/', protect, getBookings);
-router.put('/:id', protect, updateBookingStatus);
-router.put('/:id/pay', protect, updatePaymentStatus);
+// @route   GET /api/booking/list (For internal/admin use)
+router.get('/list', getBookings);
 
 module.exports = router;

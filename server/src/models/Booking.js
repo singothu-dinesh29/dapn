@@ -1,55 +1,57 @@
 const mongoose = require('mongoose');
 
 const bookingSchema = new mongoose.Schema({
-    creatorId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
     name: {
         type: String,
-        required: [true, 'Please add a name']
+        required: [true, 'Client name is required'],
+        trim: true
     },
-    emailOrMobile: {
+    email: {
         type: String,
-        required: [true, 'Please add an email or mobile number']
+        required: [true, 'Email is required'],
+        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please provide a valid email']
     },
-    submissionDate: {
+    phone: {
+        type: String,
+        required: [true, 'Contact number is required']
+    },
+    date: {
         type: Date,
-        required: [true, 'Please add a submission date']
+        required: [true, 'Booking date is required']
     },
-    handoverDate: {
-        type: Date,
-        required: [true, 'Please add a handover date']
-    },
-    paymentMethod: {
+    timeSlot: {
         type: String,
-        required: [true, 'Please specify a payment method'],
-        enum: ['UPI', 'Stripe']
+        required: [true, 'Time slot is required'],
+        enum: ['09:00 AM - 12:00 PM', '12:00 PM - 03:00 PM', '03:00 PM - 06:00 PM', '06:00 PM - 09:00 PM']
     },
-    projectType: {
+    requirements: {
         type: String,
-        required: [true, 'Please specify a project type'],
-        enum: ['Photo editing', 'Video editing', 'PPT designing', 'Website building', 'App creation']
+        required: [true, 'Project requirements are required']
     },
-    description: {
-        type: String,
-        required: [true, 'Please add a project description']
+    amount: {
+        type: Number,
+        required: [true, 'Booking amount is required']
     },
     status: {
         type: String,
-        enum: ['Pending', 'Confirmed', 'In Progress', 'Completed'],
-        default: 'Pending'
+        enum: ['pending', 'confirmed', 'completed', 'cancelled'],
+        default: 'pending'
     },
-    paymentStatus: {
+    paymentId: {
         type: String,
-        enum: ['Pending', 'Paid', 'Failed'],
-        default: 'Pending'
+        default: ''
     },
-    transactionId: {
+    orderId: {
         type: String,
         default: ''
     }
-}, { timestamps: true, bufferCommands: false });
+}, {
+    timestamps: true
+});
 
-module.exports = mongoose.model('Booking', bookingSchema);
+// Optimization: Indexing date and timeSlot for faster double-booking checks
+bookingSchema.index({ date: 1, timeSlot: 1 });
+
+const Booking = mongoose.model('Booking', bookingSchema);
+
+module.exports = Booking;

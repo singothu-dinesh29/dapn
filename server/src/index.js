@@ -55,6 +55,7 @@ const messageRoutes = require('./routes/messageRoutes');
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/booking', require('./routes/bookingRoutes')); // New Clean Booking API
 app.use('/api/founders', founderRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/messages', messageRoutes);

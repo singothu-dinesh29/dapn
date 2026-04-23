@@ -1,108 +1,79 @@
 const Booking = require('../models/Booking');
 
-// @desc    Create new booking
+/**
+ * @desc    Create a new project booking
+ * @route   POST /api/booking/create-booking
+ * @access  Public
+ */
 exports.createBooking = async (req, res) => {
     try {
-        if (global.DB_STATUS !== 'connected') {
-            if (!global.VIRTUAL_BOOKINGS) global.VIRTUAL_BOOKINGS = [];
-            const newDemoBooking = { 
-                ...req.body, 
-                _id: `demo-${Date.now()}`,
-                creatorId: req.user._id.toString(),
-                status: 'Pending',
-                paymentStatus: 'Pending',
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
-            };
-            global.VIRTUAL_BOOKINGS.unshift(newDemoBooking);
-            if (global.io) global.io.emit('newBooking', newDemoBooking);
-            
-            return res.status(201).json({
-                success: true,
-                message: 'SLOT BOOKED!!!',
-                data: newDemoBooking
+        const { name, email, phone, date, timeSlot, requirements, amount } = req.body;
+
+        // 1. Basic validation
+        if (!name || !email || !date || !timeSlot) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Please provide all required fields' 
             });
         }
 
-        const bookingData = {
-            ...req.body,
-            creatorId: req.user._id
-        };
+        // 2. Prevent Double Booking
+        // Check if a confirmed booking already exists for the same date and slot
+        const existingBooking = await Booking.findOne({
+            date: new Date(date),
+            timeSlot: timeSlot,
+            status: 'confirmed'
+        });
 
-        const booking = await Booking.create(bookingData);
-        
-        // Notify admin in real-time
-        if (global.io) {
-            global.io.emit('newBooking', booking);
+        if (existingBooking) {
+            return res.status(400).json({
+                success: false,
+                message: 'This time slot is already booked for the selected date. Please choose another slot.'
+            });
         }
 
-        res.status(201).json({ success: true, message: 'SLOT BOOKED!!!', data: booking });
+        // 3. Save Booking
+        const booking = await Booking.create({
+            name,
+            email,
+            phone,
+            date,
+            timeSlot,
+            requirements,
+            amount
+        });
+
+        res.status(201).json({
+            success: true,
+            message: 'Booking request created successfully',
+            data: booking
+        });
+
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Booking Error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server Error: Could not process booking',
+            error: error.message
+        });
     }
 };
 
-// @desc    Get all bookings
+/**
+ * @desc    Get all bookings (Admin only - theoretical)
+ */
 exports.getBookings = async (req, res) => {
     try {
-        if (global.DB_STATUS !== 'connected') {
-            const userBookings = (global.VIRTUAL_BOOKINGS || []).filter(b => b.creatorId === req.user._id.toString());
-            return res.status(200).json({ success: true, count: userBookings.length, data: userBookings });
-        }
-        const query = req.user.role === 'admin' ? {} : { creatorId: req.user._id };
-        const bookings = await Booking.find(query).sort('-createdAt');
-        res.status(200).json({ success: true, count: bookings.length, data: bookings });
+        const bookings = await Booking.find().sort('-createdAt');
+        res.json({
+            success: true,
+            count: bookings.length,
+            data: bookings
+        });
     } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-exports.updateBookingStatus = async (req, res) => {
-    try {
-        if (global.DB_STATUS !== 'connected') {
-             return res.status(200).json({ success: true, message: 'Status updated (Demo Mode)' });
-        }
-        const { status } = req.body;
-        const booking = await Booking.findByIdAndUpdate(
-            req.params.id, 
-            { status }, 
-            { new: true, runValidators: true }
-        );
-        if (!booking) return res.status(404).json({ message: 'Booking not found' });
-        if (global.io) global.io.emit('bookingUpdated', booking);
-        res.status(200).json({ success: true, data: booking });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-exports.updatePaymentStatus = async (req, res) => {
-    try {
-        if (global.DB_STATUS !== 'connected') {
-             return res.status(200).json({ success: true, message: 'Payment marked as Paid (Demo Mode)' });
-        }
-        const booking = await Booking.findByIdAndUpdate(
-            req.params.id, 
-            { paymentStatus: 'Paid' }, 
-            { new: true }
-        );
-        if (!booking) return res.status(404).json({ message: 'Booking not found' });
-        if (global.io) global.io.emit('bookingUpdated', booking);
-        res.status(200).json({ success: true, data: booking });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-exports.deleteBooking = async (req, res) => {
-    try {
-        if (global.DB_STATUS !== 'connected') {
-             return res.status(200).json({ success: true, message: 'Booking deleted (Demo Mode)' });
-        }
-        const booking = await Booking.findByIdAndDelete(req.params.id);
-        if (!booking) return res.status(404).json({ message: 'Booking not found' });
-        res.status(200).json({ success: true, message: 'Booking removed' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({
+            success: false,
+            message: 'Could not fetch bookings'
+        });
     }
 };
