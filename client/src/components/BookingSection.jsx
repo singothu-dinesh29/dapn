@@ -21,59 +21,103 @@ const BookingSection = () => {
         description: ''
     });
 
+    // Helper: Load Razorpay SDK
+    const loadRazorpayScript = () => {
+        return new Promise((resolve) => {
+            if (window.Razorpay) {
+                resolve(true);
+                return;
+            }
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.body.appendChild(script);
+        });
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
         setLoading(true);
 
-        // CLOUD BOOKING RESILIENCE: Bypass network errors on non-local environments
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        if (!isLocal) {
-            setTimeout(() => {
-                setLoading(false);
-                setIsSubmitted(true);
-                toast.success('Booking Request Received! Our team will contact you.');
-                confetti({
-                    particleCount: 150,
-                    spread: 70,
-                    origin: { y: 0.6 },
-                    colors: ['#3b82f6', '#2dd4bf', '#ffffff']
-                });
-                setTimeout(() => router.push('/my-bookings'), 3000);
-            }, 1000);
-            return;
-        }
+        const baseUrl = isLocal ? 'http://127.0.0.1:5001' : window.location.origin;
 
         try {
-            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-            const config = {
-                headers: { Authorization: `Bearer ${userInfo?.token}` }
-            };
-
-            const payload = {
+            // STEP 1: Create Booking in Database
+            const bookingResponse = await axios.post(`${baseUrl}/api/booking/create-booking`, {
                 ...formData,
-                projectType: formData.productType,
-                emailOrMobile: formData.contact
-            };
-
-            await axios.post('http://127.0.0.1:5001/api/bookings', payload, config);
-
-            setIsSubmitted(true);
-            toast.success('Booking Successful!');
-            confetti({
-                particleCount: 150,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#000000', '#ffffff', '#71717a']
+                amount: 500 // Demo fixed price in INR
             });
 
-            setTimeout(() => {
-                router.push('/my-bookings');
-            }, 3000);
+            if (!bookingResponse.data.success) throw new Error('Booking registration failed');
+            const bookingId = bookingResponse.data.data._id;
+
+            // STEP 2: Create Razorpay Order
+            const orderResponse = await axios.post(`${baseUrl}/api/payment/create-order`, {
+                amount: 500
+            });
+
+            if (!orderResponse.data.success) throw new Error('Payment order creation failed');
+            const { order } = orderResponse.data;
+
+            // STEP 3: Load Razorpay SDK
+            const isScriptLoaded = await loadRazorpayScript();
+            if (!isScriptLoaded) {
+                toast.error('Razorpay SDK failed to load. Please check your connection.');
+                return;
+            }
+
+            // STEP 4: Configure Razorpay Checkout
+            const options = {
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_51O...', 
+                amount: order.amount,
+                currency: order.currency,
+                name: "Dapnix Creators",
+                description: `Slot Booking: ${formData.productType}`,
+                image: "https://your-logo-url.com/logo.png",
+                order_id: order.id,
+                handler: async (response) => {
+                    // STEP 5: Verify Payment Signature
+                    try {
+                        const verifyRes = await axios.post(`${baseUrl}/api/payment/verify-payment`, {
+                            ...response,
+                            bookingId
+                        });
+
+                        if (verifyRes.data.success) {
+                            setIsSubmitted(true);
+                            toast.success('Payment Verified! Booking Confirmed.');
+                            confetti({
+                                particleCount: 150,
+                                spread: 70,
+                                origin: { y: 0.6 }
+                            });
+                            setTimeout(() => router.push('/my-bookings'), 5000);
+                        }
+                    } catch (err) {
+                        toast.error('Payment verification failed. Please contact support.');
+                    }
+                },
+                prefill: {
+                    name: formData.name,
+                    email: formData.contact,
+                },
+                theme: { color: "#000000" },
+                modal: {
+                    ondismiss: () => {
+                        setLoading(false);
+                        toast('Payment cancelled', { icon: 'ℹ️' });
+                    }
+                }
+            };
+
+            const paymentObject = new window.Razorpay(options);
+            paymentObject.open();
+
         } catch (err) {
-            setIsSubmitted(true);
-            toast.success('Request Received! (Cloud Mode)');
-            setTimeout(() => router.push('/my-bookings'), 3000);
+            console.error('Checkout Error:', err);
+            toast.error(err.response?.data?.message || 'Checkout failed. Please try again.');
         } finally {
             setLoading(false);
         }
