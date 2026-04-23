@@ -77,7 +77,7 @@ const RegisterForm = () => {
     return (
         <div className="w-full max-w-[440px] backdrop-blur-xl bg-[#1a1c2ec0] p-10 rounded-[2.5rem] border border-white/10 shadow-2xl">
             <div className="mb-10 text-center">
-                <h1 className="text-4xl font-bold text-white tracking-tight mb-2">Sign Up</h1>
+                <h1 className="text-4xl font-bold text-white tracking-tight mb-2">Sign Up (v2)</h1>
                 <p className="text-zinc-400 text-sm">Join the elite ecosystem of creators.</p>
             </div>
 
