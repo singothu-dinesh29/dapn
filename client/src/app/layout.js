@@ -10,7 +10,7 @@ const playfair = Playfair_Display({
 
 export const metadata = {
   title: {
-    default: 'Dapnix.creators | Premium Digital Artisan Ecosystem',
+    default: 'Dapnix v2 | Premium Artisan Ecosystem',
     template: '%s | Dapnix.creators'
   },
   description: 'The elite platform for professional creative services. Showcase your portfolio and manage direct bookings with our state-of-the-art creator ecosystem.',

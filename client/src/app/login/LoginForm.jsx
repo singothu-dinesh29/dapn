@@ -79,12 +79,6 @@ const LoginForm = () => {
             </div>
 
             <form onSubmit={handleLogin} className="space-y-6">
-                {error && (
-                    <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-2xl text-[11px] font-bold uppercase tracking-wider text-center">
-                        {error}
-                    </div>
-                )}
-                
                 <div className="space-y-4">
                     <div className="relative group">
                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-blue-400 transition-colors" size={18} />
