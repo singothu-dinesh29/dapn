@@ -15,10 +15,14 @@ const ProjectSection = () => {
 
     const fetchCmsWork = async () => {
         try {
-            const { data } = await axios.get('https://dapn-web.vercel.app/api/admin/content/all');
-            setCmsContent(data.data);
+            // Use relative path for maximum reliability on Vercel
+            const { data } = await axios.get('/api/admin/content/all');
+            if (data && data.data) {
+                setCmsContent(data.data);
+            }
         } catch (error) {
-            console.error('CMS Fetch Error:', error);
+            console.warn('CMS Feed offline, using static portfolio only.');
+            setCmsContent([]); // Set empty array to prevent map errors
         } finally {
             setLoading(false);
         }

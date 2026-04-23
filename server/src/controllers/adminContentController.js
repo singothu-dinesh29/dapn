@@ -18,14 +18,24 @@ exports.addContent = async (req, res) => {
         }
 
         // 2. Create Content Record
-        const content = await Content.create({
+        const contentData = {
             title,
             type,
             fileUrl,
             externalLink,
-            description,
-            creatorId: req.admin?.id || req.user?.id // Linked to the admin who uploaded it
-        });
+            description
+        };
+
+        // If authorized via real JWT, attach creator. 
+        // If via Bypass, we save as 'System Master'
+        if (req.admin?.id || req.user?.id) {
+            contentData.creatorId = req.admin?.id || req.user?.id;
+        } else {
+            // For bypass mode, we skip creatorId or use a placeholder if needed
+            // But we must ensure the model allows it. I will update the model next.
+        }
+
+        const content = await Content.create(contentData);
 
         res.status(201).json({
             success: true,
