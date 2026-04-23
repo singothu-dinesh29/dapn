@@ -296,7 +296,7 @@ const BookingSection = () => {
                                 
                                 <button 
                                     onClick={() => {
-                                        const message = `🚀 *New Booking from Dapnix!* 🚀\n\n👤 *Name:* ${formData.name}\n📱 *Contact:* ${formData.contact}\n📅 *Date:* ${formData.submissionDate}\n🕒 *Slot:* ${formData.timeSlot || 'Standard'}\n🎨 *Project:* ${formData.productType}\n📝 *Requirements:* ${formData.description}\n\n_Sent via Dapnix Creative Ecosystem_`;
+                                        const message = `🚀 *New Booking from Dapnix!* 🚀\n\n👤 *Name:* ${formData.name}\n📱 *Contact:* ${formData.contact}\n📅 *Date:* ${formData.submissionDate}\n🕒 *Slot:* ${formData.timeSlot || 'Standard'}\n🎨 *Project:* ${formData.productType}\n💳 *Payment:* ${formData.paymentMethod}\n📝 *Requirements:* ${formData.description}\n\n_Sent via Dapnix Creative Ecosystem_`;
                                         const encodedMessage = encodeURIComponent(message);
                                         window.open(`https://wa.me/919959259761?text=${encodedMessage}`, '_blank');
                                     }}
