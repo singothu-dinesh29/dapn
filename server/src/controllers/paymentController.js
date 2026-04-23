@@ -105,6 +105,37 @@ exports.verifyPayment = async (req, res) => {
         
         await booking.save();
 
+        // 5. AUTOMATION: Send Confirmation Email
+        try {
+            const sendEmail = require('../utils/sendEmail');
+            await sendEmail({
+                email: booking.email,
+                subject: 'Dapnix | Booking Confirmed! 🚀',
+                message: `
+                    <div style="font-family: sans-serif; padding: 40px; background: #fafafa;">
+                        <div style="max-width: 600px; margin: auto; background: #ffffff; padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05);">
+                            <h1 style="text-transform: uppercase; letter-spacing: -2px; font-weight: 900; color: #000; margin-bottom: 20px;">Slot Confirmed</h1>
+                            <p style="color: #666; font-size: 16px; line-height: 1.6;">Hi ${booking.name},</p>
+                            <p style="color: #666; font-size: 16px; line-height: 1.6;">Your payment has been verified. Your creative session for <b>${booking.timeSlot}</b> on <b>${new Date(booking.date).toDateString()}</b> is now officially confirmed.</p>
+                            
+                            <div style="margin: 40px 0; padding: 30px; background: #f8f9fa; border-radius: 16px; border: 1px solid #eee;">
+                                <p style="margin: 0; font-size: 12px; color: #999; text-transform: uppercase; font-weight: 900; letter-spacing: 1px;">Requirements</p>
+                                <p style="margin: 10px 0 0; color: #333; font-weight: 600;">${booking.requirements}</p>
+                            </div>
+
+                            <p style="color: #666; font-size: 14px;">Our artisans will contact you shortly to discuss the next steps.</p>
+                            
+                            <hr style="border: none; border-top: 1px solid #eee; margin: 40px 0;">
+                            <p style="font-size: 10px; color: #ccc; text-transform: uppercase; letter-spacing: 2px;">Dapnix.creators | Premium Digital Artisan Ecosystem</p>
+                        </div>
+                    </div>
+                `
+            });
+        } catch (emailErr) {
+            console.error('Automation Error: Could not send confirmation email', emailErr);
+            // We don't fail the request if email fails, but we log it.
+        }
+
         res.status(200).json({
             success: true,
             message: "Payment verified and booking confirmed successfully",
