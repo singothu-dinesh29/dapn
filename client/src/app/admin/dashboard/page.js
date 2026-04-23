@@ -5,37 +5,18 @@ import { Database, ShieldCheck, Activity, Users, CreditCard } from 'lucide-react
 import { motion } from 'framer-motion';
 
 const AdminDashboard = () => {
-    const router = useRouter();
-    const [authorized, setAuthorized] = useState(false);
-
-    useEffect(() => {
-        const token = localStorage.getItem('adminToken');
-        if (!token) {
-            router.push('/dashboard-secure-9x7k');
-        } else {
-            setAuthorized(true);
-        }
-    }, []);
-
-    if (!authorized) return null;
-
     return (
-        <div className="min-h-screen bg-[#050505] text-white p-8">
-            <div className="max-w-7xl mx-auto">
-                <div className="flex justify-between items-center mb-20">
-                    <div>
-                        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 mb-2">
-                            <ShieldCheck size={14} /> System Core Authorized
-                        </div>
-                        <h1 className="text-6xl font-black tracking-tighter uppercase italic">The Vault.</h1>
-                    </div>
-                    <button 
-                        onClick={() => { localStorage.removeItem('adminToken'); router.push('/'); }}
-                        className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-red-500 transition-colors"
-                    >
-                        Terminate Session
-                    </button>
+        <div className="animate-in fade-in duration-700">
+            <div className="flex justify-between items-end mb-16">
+                <div>
+                    <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.4em] mb-3 italic">System Pulse</p>
+                    <h1 className="text-5xl lg:text-7xl font-black tracking-tighter uppercase italic">The Core.</h1>
                 </div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-emerald-500 flex items-center gap-2 bg-emerald-500/5 px-4 py-2 rounded-full border border-emerald-500/10">
+                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                    Live Ecosystem
+                </div>
+            </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                     {[
@@ -77,7 +58,6 @@ const AdminDashboard = () => {
                             <p className="text-white/60 text-[10px] font-black uppercase tracking-widest">Generate Master JSON</p>
                         </div>
                     </div>
-                </div>
             </div>
         </div>
     );
