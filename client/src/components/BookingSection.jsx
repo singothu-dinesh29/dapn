@@ -281,21 +281,34 @@ const BookingSection = () => {
                                 key="success"
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                className="backdrop-blur-3xl bg-white/20 p-20 rounded-[50px] shadow-2xl border-2 border-white flex flex-col items-center justify-center text-center"
+                                className="backdrop-blur-3xl bg-white/20 p-10 md:p-20 rounded-[50px] shadow-2xl border-2 border-white flex flex-col items-center justify-center text-center"
                             >
                                 <motion.div 
                                     initial={{ scale: 0 }}
                                     animate={{ scale: 1 }}
                                     transition={{ type: "spring", stiffness: 200, damping: 10 }}
-                                    className="w-24 h-24 bg-white text-black rounded-full flex items-center justify-center mb-8"
+                                    className="w-20 h-20 bg-white text-black rounded-full flex items-center justify-center mb-8"
                                 >
-                                    <CheckCircle size={48} />
+                                    <CheckCircle size={40} />
                                 </motion.div>
-                                <h4 className="text-5xl font-black tracking-tighter text-white mb-4 italic uppercase">SLOT BOOKED!!!</h4>
-                                <p className="text-white/60 font-bold uppercase tracking-widest text-sm">Elevating your creative vision.</p>
+                                <h4 className="text-4xl md:text-5xl font-black tracking-tighter text-white mb-4 italic uppercase">SLOT BOOKED!!!</h4>
+                                <p className="text-white/60 font-bold uppercase tracking-widest text-xs mb-10">Elevating your creative vision.</p>
                                 
-                                <div className="mt-12 text-[10px] font-black uppercase tracking-[0.5em] text-white/20">
-                                    Returning to form in 5s...
+                                <button 
+                                    onClick={() => {
+                                        const message = `🚀 *New Booking from Dapnix!* 🚀\n\n👤 *Name:* ${formData.name}\n📱 *Contact:* ${formData.contact}\n📅 *Date:* ${formData.submissionDate}\n🕒 *Slot:* ${formData.timeSlot || 'Standard'}\n🎨 *Project:* ${formData.productType}\n📝 *Requirements:* ${formData.description}\n\n_Sent via Dapnix Creative Ecosystem_`;
+                                        const encodedMessage = encodeURIComponent(message);
+                                        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+                                    }}
+                                    className="group relative flex items-center gap-3 bg-[#25D366] hover:bg-[#20ba5a] text-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl shadow-green-500/20"
+                                >
+                                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-white text-black px-4 py-2 rounded-xl text-[8px] font-black opacity-0 group-hover:opacity-100 transition-all">Share to WhatsApp</div>
+                                    <MessageSquare size={16} />
+                                    Confirm on WhatsApp
+                                </button>
+
+                                <div className="mt-12 text-[9px] font-black uppercase tracking-[0.4em] text-white/30">
+                                    Finalizing ecosystem sync...
                                 </div>
                             </motion.div>
                         )}
