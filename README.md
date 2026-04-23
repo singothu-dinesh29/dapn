@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Dapnix.creators
 
 A premium portfolio and service booking platform for creators.
@@ -34,3 +35,6 @@ A premium portfolio and service booking platform for creators.
 
 ## Architecture
 See [architecture.md](./architecture.md) for detailed system design.
+=======
+# dapn
+>>>>>>> 3473bd4fa77fac5a0e6094aa7af663a7f150f05e
