@@ -30,26 +30,19 @@ const ProjectSection = () => {
 
     const categories = [
         {
-            name: 'Recent Studio Work',
-            icon: <Sparkles size={22} className="text-emerald-500" />,
-            description: 'Latest high-end assets deployed from the Admin Vault.',
-            type: 'gallery',
-            image: cmsContent[0]?.fileUrl || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800',
-            items: cmsContent.map(item => ({
-                id: item._id,
-                title: item.title,
-                url: item.fileUrl,
-                type: item.type,
-                external: item.externalLink
-            }))
-        },
-        {
             name: 'Photo Editing',
             icon: <ImageIcon size={22} />,
             description: 'Professional color grading and retouching.',
             type: 'gallery',
             image: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80&w=800',
             items: [
+                ...cmsContent.filter(item => item.type === 'image').map(item => ({
+                    id: item._id,
+                    title: item.title,
+                    url: item.fileUrl,
+                    type: item.type,
+                    external: item.externalLink
+                })),
                 { id: 1, title: 'Johnny Stale Life', url: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e' },
                 { id: 2, title: 'RAW Style Edit', url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71' }
             ]
@@ -61,8 +54,26 @@ const ProjectSection = () => {
             type: 'gallery',
             image: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&q=80&w=800',
             items: [
+                ...cmsContent.filter(item => item.type === 'video').map(item => ({
+                    id: item._id,
+                    title: item.title,
+                    url: item.fileUrl,
+                    type: item.type,
+                    external: item.externalLink
+                })),
                 { id: 1, title: 'Achromatic Motion', url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f' },
                 { id: 2, title: 'HEY YOU Campaign', url: 'https://images.unsplash.com/photo-1536240478700-b869070f9279' }
+            ]
+        },
+        {
+            name: 'PPT Designing',
+            icon: <Presentation size={22} />,
+            description: 'Corporate decks and investor pitches.',
+            type: 'gallery',
+            image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&q=80&w=800',
+            items: [
+                { id: 1, title: 'Corporate Deck', url: 'https://images.unsplash.com/photo-1557804506-669a67965ba0' },
+                { id: 2, title: 'Investor Pitch', url: 'https://images.unsplash.com/photo-1557426272-fc759fdf7a8d' }
             ]
         },
         {

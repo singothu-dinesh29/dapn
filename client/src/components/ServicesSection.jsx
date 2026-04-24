@@ -81,7 +81,13 @@ const ServicesSection = () => {
                                 if (service.url) {
                                     window.open(service.url, '_blank');
                                 } else {
-                                    document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+                                    const projectsSection = document.getElementById('projects');
+                                    if (projectsSection) {
+                                        projectsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                    } else {
+                                        // Fallback if ID is missing
+                                        window.scrollTo({ top: document.body.scrollHeight / 2, behavior: 'smooth' });
+                                    }
                                 }
                             }}
                             className="group bg-zinc-50 rounded-[40px] overflow-hidden shadow-sm border border-zinc-100 hover:shadow-xl transition-all duration-500 cursor-pointer"
